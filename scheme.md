@@ -8,7 +8,7 @@
 
 - [x] apresentar o caminho gerado;
 
-- [ ] apresentar o número de passos (n-estados - 1).
+- [x] apresentar o número de passos (n-estados - 1).
 
 - [ ] duas heurísticas diferentes;
 

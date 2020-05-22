@@ -15,7 +15,7 @@ def show_path():
 	print('\nESTADO OBJETIVO:')
 	show(GOAL_STATE)
 
-	print('\nCAMINHO ENCONTRADO:')
+	print(f'\nNÚMERO DE PASSOS: {len(closed_states) - 1}\nCAMINHO ENCONTRADO:')
 	for state in closed_states:
 		show(state)
 
