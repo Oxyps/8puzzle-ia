@@ -1,6 +1,8 @@
+import numpy as np
+
 class State:
 	def __init__(self, matrix, level, fvalue):
-		self.matrix = matrix
+		self.matrix = np.array(matrix)
 		self.level = level
 		self.fvalue = fvalue
 
@@ -8,43 +10,29 @@ class State:
 		return str(self.matrix)
 
 	def __eq__(self, state):
-		return self.matrix == state.matrix
+		return np.array_equal(self.matrix, state.matrix)
 
 	def already_exists(self, states_list):
-		return self in states_list
-
-	def copy(self):
-		temp_matrix = []
+		""" Check if the all state is in given list of states """
 		
-		for line in self.matrix:
-			temp = []
-			
-			for column in line:
-				temp.append(column)
-			
-			temp_matrix.append(temp)
-
-		return temp_matrix
+		return self in states_list
 
 	def find_blank(self):
 		""" Returns the position of the blank space """
 
-		for i in range(0, len(self.matrix)):
-			for j in range(0, len(self.matrix)):
-				if self.matrix[i][j] == 0:
-					return i, j
+		return np.where(self.matrix == 0)
 	
 	def move(self, x1, y1, x2, y2):
 		""" Move the blank (x1, y1) to the given direction (x2, y2)\n
 		if the given direction its out of limits return None """
 		
-		if x2 >= 0 and x2 < len(self.matrix) and y2 >= 0 and y2 < len(self.matrix):
-			temp_matrix = self.copy()
+		if x2 >= 0 and x2 < 3 and y2 >= 0 and y2 < 3:
+			temp_matrix = self.matrix.copy()
 
-			temp = temp_matrix[x2][y2]
+			temp = temp_matrix[x2, y2]
 
-			temp_matrix[x2][y2] = 0
-			temp_matrix[x1][y1] = temp
+			temp_matrix[x2, y2] = 0
+			temp_matrix[x1, y1] = temp
 			
 			return temp_matrix
 		else:
@@ -65,5 +53,5 @@ class State:
 			if child_matrix is not None:
 				child_state = State(child_matrix, self.level + 1, 0)
 				children.append(child_state)
-		
+
 		return children

@@ -38,15 +38,11 @@ def h2(current_matrix, goal_matrix):
 	""" This heuristic return the Manhattan distance for each tile out'o position """
 	
 	current_array = []
-	goal_array = []
-
-	for row1, row2 in zip(current_matrix, goal_matrix):
-		for item1, item2 in zip(row1, row2):
-			current_array.append(item1)
-			goal_array.append(item2)
+	for row in current_matrix:
+		for item in row:
+			current_array.append(item)
 
 	heuristic = 0
-	
 	for i in range(3):
 		for j in range(3):
 			if goal_matrix[i][j] != 0:
@@ -141,13 +137,13 @@ def bfs():
 				opened_states.append(child)
 
 def issolvable():
-	# transform a matrix in array
+	# transform a matrix in array without the blank
 	array = []
 	for line in INITIAL_STATE.matrix:
 		for value in line:
 			if value != 0:
 				array.append(value)
-
+	
 	# count number of 'inversions'
 	inversion_count = 0
 	for i in range(0, len(array) - 1):
@@ -158,12 +154,14 @@ def issolvable():
 	# if the number of inversions is even then is solvable
 	return inversion_count % 2 == 0
 
-# INITIAL_STATE = State([[2, 8, 3], [1, 6, 4], [7, 0, 5]], 0, 0)
+INITIAL_STATE = State([[2, 8, 3], [1, 6, 4], [7, 0, 5]], 0, 0)
+""" estados iniciais aleatórios
+INITIAL_STATE = None
 while True:
 	INITIAL_STATE = random_state()
 	if issolvable():
 		break
-	del INITIAL_STATE
+"""
 
 GOAL_STATE = State([[1, 2, 3], [8, 0, 4], [7, 6, 5]], 0, 0)
 
@@ -173,8 +171,9 @@ opened_states = [INITIAL_STATE]
 closed_states = []
 
 astar()
-
-# dfs()
-# bfs()
+""" rodar uma busca por vez
+dfs()
+bfs()
+"""
 
 show_path()
