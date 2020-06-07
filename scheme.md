@@ -10,8 +10,10 @@
 
 - [x] apresentar o número de passos (n-estados - 1).
 
-- [ ] duas heurísticas diferentes;
+- [x] disponibilizar duas heurísticas diferentes (nr° de casas fora de posição e distância de Manhattan para cada casa);
 
 - [x] função para gerar estado inicial aleatório;
 
-- [ ] criar uma função para verificar se é resolvível com o estado aleatório inicial escolhido;
+- [x] criar uma função para verificar se é resolvível com o estado inicial aleatório escolhido;
+
+- [ ] diminuir a complexidade ou paralelizar a solução para reduzir o tempo de processamento.

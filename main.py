@@ -4,7 +4,10 @@ from state import State
 def show(state):
 	for line in state.matrix:
 		for value in line:
-			print(f'{value} ', end='')
+			if value == 0:
+				print('  ', end='')
+			else:
+				print(f'{value} ', end='')
 		print()
 	print()
 
@@ -19,16 +22,36 @@ def show_path():
 	for state in closed_states:
 		show(state)
 
-def h(current_matrix, goal_matrix):
-	""" Returns heuristic cost between the current matrix to the goal matrix\n
-		This heuristic increments by 1 for each value that's out of goal position """
+def h1(current_matrix, goal_matrix):
+	""" This heuristic increments by 1 for each value that's out of goal position """
 
 	heuristic = 0
 
 	for current_line, goal_line in zip(current_matrix, goal_matrix):
 		for current, goal in zip(current_line, goal_line):
-			if current != goal and current != ' ':
+			if current != goal and current != 0:
 				heuristic += 1
+
+	return heuristic
+
+def h2(current_matrix, goal_matrix):
+	""" This heuristic return the Manhattan distance for each tile out'o position """
+	
+	current_array = []
+	goal_array = []
+
+	for row1, row2 in zip(current_matrix, goal_matrix):
+		for item1, item2 in zip(row1, row2):
+			current_array.append(item1)
+			goal_array.append(item2)
+
+	heuristic = 0
+	
+	for i in range(3):
+		for j in range(3):
+			if goal_matrix[i][j] != 0:
+				x, y = divmod(current_array.index(goal_matrix[i][j]), 3)
+				heuristic += abs(x - i) + abs(y - j)
 
 	return heuristic
 
@@ -37,10 +60,11 @@ def f(current_state, goal_state):
 		Where g(x) means the current state level in graph\n
 		and the h(x) an heuristic cost to the current state to the goal state"""
 
-	return current_state.level + h(current_state.matrix, goal_state.matrix) 
+	# return current_state.level + h1(current_state.matrix, goal_state.matrix)
+	return current_state.level + h2(current_state.matrix, goal_state.matrix)
 
 def random_state():
-	choose = [1, 2, 3, 4, 5, 6, 7, 8, ' ']
+	choose = [1, 2, 3, 4, 5, 6, 7, 8, 0]
 
 	matrix = []
 
@@ -57,15 +81,17 @@ def random_state():
 def astar():
 	while True:
 		# remove from the start cause its upward ordered, so the start is the min fvalue
-		current_state = opened_states[0]	
-		
+		current_state = opened_states[0]
+
 		# close current state and delete from opened states list
 		closed_states.append(current_state)
 		del opened_states[0]
 
-		# if: the heuristic cost between the current matrix to the goal matrix is 0
-		# then: the best path, for the a* search with this heuristic, was achieved
-		if h(current_state.matrix, GOAL_STATE.matrix) == 0:
+		# if the heuristic cost between the current matrix to the goal matrix is 0
+		# then the best path, for the a* search with this heuristic, was achieved
+		# if h1(current_state.matrix, GOAL_STATE.matrix) == 0:
+		# 	break
+		if h2(current_state.matrix, GOAL_STATE.matrix) == 0:
 			break
 
 		# calculate fvalue to all child states from current state
@@ -115,11 +141,31 @@ def bfs():
 				opened_states.append(child)
 
 def issolvable():
-	pass
+	# transform a matrix in array
+	array = []
+	for line in INITIAL_STATE.matrix:
+		for value in line:
+			if value != 0:
+				array.append(value)
 
-# INITIAL_STATE = random_state()
-INITIAL_STATE = State([[2, 8, 3], [1, 6, 4], [7, ' ', 5]], 0, 0)
-GOAL_STATE = State([[1, 2, 3], [8, ' ', 4], [7, 6, 5]], 0, 0)
+	# count number of 'inversions'
+	inversion_count = 0
+	for i in range(0, len(array) - 1):
+		for j in range(i + 1, len(array)):
+			if array[i] > array[j]:
+				inversion_count += 1
+
+	# if the number of inversions is even then is solvable
+	return inversion_count % 2 == 0
+
+# INITIAL_STATE = State([[2, 8, 3], [1, 6, 4], [7, 0, 5]], 0, 0)
+while True:
+	INITIAL_STATE = random_state()
+	if issolvable():
+		break
+	del INITIAL_STATE
+
+GOAL_STATE = State([[1, 2, 3], [8, 0, 4], [7, 6, 5]], 0, 0)
 
 INITIAL_STATE.fvalue = f(INITIAL_STATE, GOAL_STATE)
 
@@ -127,6 +173,7 @@ opened_states = [INITIAL_STATE]
 closed_states = []
 
 astar()
+
 # dfs()
 # bfs()
 
